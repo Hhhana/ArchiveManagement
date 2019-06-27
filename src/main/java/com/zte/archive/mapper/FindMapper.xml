@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.archive.dao.FindDao">
+
+        <resultMap id="archive" type="archive">
+                <!--
+                主键使用id,必须放在最前面
+                其它字段用result,property为映射类model的属性值,column为表中列字段
+                -->
+                <id property="objectId" column="ObjectId"/>
+                <result property="archiveId" column="ArchiveId"/>
+                <result property="typeId" column="TypeId"/>
+                <result property="location" column="Location"/>
+                <result property="createrId" column="CreaterId"/>
+                <result property="levelId" column="LevelId"/>
+                <result property="createTime" column="CreateTime"/>
+                <result property="endTime" column="EndTime"/>
+                <result property="state" column="State"/>
+        </resultMap>
+
+
+        <resultMap id="find" type="find">
+                <!--
+                主键使用id,必须放在最前面
+                其它字段用result,property为映射类model的属性值,column为表中列字段
+                -->
+                <id property="objectId" column="ObjectId"/>
+                <result property="archiveId" column="ArchiveId"/>
+                <result property="loginId" column="LoginId"/>
+                <result property="finder" column="Finder"/>
+                <result property="findId" column="FinderId"/>
+                <result property="findTime" column="FindTime"/>
+                <result property="remark" column="Remark"/>
+        </resultMap>
+
+        <resultMap id="lose" type="lose">
+                <!--
+                主键使用id,必须放在最前面
+                其它字段用result,property为映射类model的属性值,column为表中列字段
+                -->
+                <id property="objectId" column="ObjectId"/>
+                <result property="archiveId" column="ArchiveId"/>
+                <result property="loginId" column="LoginId"/>
+                <result property="loser" column="Loser"/>
+                <result property="loserId" column="LoserId"/>
+                <result property="loseTime" column="LoseTime"/>
+                <result property="state" column="State"/>
+                <result property="remark" column="Remark"/>
+        </resultMap>
+
+        <resultMap id="destroy" type="destroy">
+                <!--
+                主键使用id,必须放在最前面
+                其它字段用result,property为映射类model的属性值,column为表中列字段
+                -->
+                <id property="objectId" column="ObjectId"/>
+                <result property="archiveId" column="ArchiveId"/>
+                <result property="loginId" column="LoginId"/>
+                <result property="destroyTime" column="DestroyTime"/>
+                <result property="remark" column="Remark"/>
+        </resultMap>
+
+        <!--
+            根据档案编号id查找符合条件的Archive表中记录
+            public Archive queryAllArchive(@Param("archiveId") String archiveId);
+         -->
+        <select id="queryAllArchive" resultMap="archive">
+                SELECT
+                a.TypeId,a.Title,a.LoginId,a.CreateTime,a.LevelId,a.EndTime,a.State,a.Location
+
+                FROM
+
+                t_archive a
+
+                where a.ArchiveId=#{archiveId}
+
+        </select>
+
+        <!--
+          根据起始时间查找符合条件的Find表中记录
+          public List<Find> queryAllFind(@Param("startTime")String startTime,@Param("endTime")String endTime);
+         -->
+        <select id="queryAllFind" resultMap="find">
+                SELECT
+                f.ArchiveId,f.LoginId,f.Finder,f.FinderId,f.FindTime,f.Remark
+
+                FROM
+
+                t_find f
+
+                where f.FindTime BETWEEN #{startTime} and #{endTime}
+
+        </select>
+
+        <!--
+        根据起始时间查找符合条件的Lose表中记录
+        public List<Lose> queryAllLose(@Param("startTime")String startTime,@Param("endTime")String endTime);
+        -->
+        <select id="queryAllLose" resultMap="lose">
+                SELECT
+                l.ArchiveId,l.LoginId,l.Loser,l.LoserId,l.LoseTime,l.State,l.Remark
+
+                FROM
+
+                t_lose l
+
+                where l.LoseTime BETWEEN #{startTime} and #{endTime}
+
+        </select>
+
+        <!--
+        根据起始时间查找符合条件的Destroy表中记录
+        public List<Destroy> queryAllDestroy(@Param("startTime")String startTime,@Param("endTime")String endTime);
+-->
+        <select id="queryAllDestroy" resultMap="destroy">
+                SELECT
+                d.ArchiveId,d.LoginId,d.DestroyTime,d.Remark
+
+                FROM
+
+                t_destroy d
+
+                where d.DestroyTime BETWEEN #{startTime} and #{endTime}
+
+        </select>
+
+
+        <!--
+               根据archiveId修改其属性State
+        -->
+        <update id="updateArchive" >
+              UPDATE
+
+              t_archive a
+
+              SET State="正常"
+
+              where a.ArchiveId=#{archiveId}
+        </update>
+
+
+        <insert id="insertFind" parameterType="find">
+
+               INSERT
+
+                INTO
+
+                t_find
+                (ArchiveId,LoginId,Finder,FinderId,FindTime,Remark)
+
+                VALUES
+
+                (#{archiveId},#{loginId},#{finder},#{findId},#{findTime},#{remark})
+        </insert>
+
+</mapper>
